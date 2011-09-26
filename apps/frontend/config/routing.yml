@@ -1,0 +1,39 @@
+# default rules
+homepage:
+  url:   /
+  param: { module: default, action: welcome }
+  
+##############################################################################
+#--[ User Management ]------------------------------------------------------ #
+##############################################################################  
+login:
+  url:   /login
+  param: { module: afGuardAuth, action: signin }
+
+logout:
+  url:   /logout
+  param: { module: afGuardAuth, action: signout }
+
+my_profile:
+  url:   /user/myprofile
+  param: { module: afGuardUserProfile, action: edit }
+  
+af_guard_signin:
+  url: /login
+  param: { module: afGuardAuth, action: signin }
+
+af_guard_signout:
+  url: /logout
+  param: { module: afGuardAuth, action: signout }
+
+af_guard_password:
+  url: /forgot-password
+  param: { module: afGuardAuth, action: passwordRequest }  
+  
+  
+default_index:
+  url:   /:module
+  param: { action: index }
+
+default:
+  url:   /:module/:action/*

@@ -1,0 +1,6 @@
+# default values
+all:
+  growl_notification:
+    enable: false
+  af_guard_plugin:
+    profile_class: afGuardUserProfile

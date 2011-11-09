@@ -27,13 +27,15 @@ ENGINE = InnoDB;
 -- Table `afemr`.`amc_misc_data`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`amc_misc_data` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
   `amc_id` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Unique and maps to list_options list clinical_rules' ,
   `pid` BIGINT(20) NULL DEFAULT NULL ,
   `map_category` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Maps to an object category (such as prescriptions etc.)' ,
   `map_id` BIGINT(20) NOT NULL DEFAULT '0' COMMENT 'Maps to an object id (such as prescription id etc.)' ,
   `date_created` DATETIME NULL DEFAULT NULL ,
   `date_completed` DATETIME NULL DEFAULT NULL ,
-  INDEX (`amc_id` ASC, `pid` ASC, `map_id` ASC) )
+  INDEX (`amc_id` ASC, `pid` ASC, `map_id` ASC) ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -41,8 +43,10 @@ ENGINE = InnoDB;
 -- Table `afemr`.`settings`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`settings` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
   `array_key` VARCHAR(255) NULL DEFAULT NULL ,
-  `array_value` LONGTEXT NULL DEFAULT NULL )
+  `array_value` LONGTEXT NULL DEFAULT NULL ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -97,7 +101,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`batchcom` (
   `msg_type` VARCHAR(60) NULL DEFAULT NULL ,
   `msg_subject` VARCHAR(255) NULL DEFAULT NULL ,
   `msg_text` MEDIUMTEXT NULL DEFAULT NULL ,
-  `msg_date_sent` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,
+  `msg_date_sent` DATETIME NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1;
@@ -257,7 +261,7 @@ ENGINE = InnoDB;
 CREATE  TABLE IF NOT EXISTS `afemr`.`claims` (
   `patient_id` INT(11) NOT NULL ,
   `encounter_id` INT(11) NOT NULL ,
-  `version` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `version` INT(10) UNSIGNED NOT NULL ,
   `payer_id` INT(11) NOT NULL DEFAULT '0' ,
   `status` TINYINT(2) NOT NULL DEFAULT '0' ,
   `payer_type` TINYINT(4) NOT NULL DEFAULT '0' ,
@@ -465,7 +469,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`drugs` (
   `ndc_number` VARCHAR(20) NOT NULL DEFAULT '' ,
   `on_order` INT(11) NOT NULL DEFAULT '0' ,
   `reorder_point` INT(11) NOT NULL DEFAULT '0' ,
-  `last_notify` DATE NOT NULL DEFAULT '0000-00-00' ,
+  `last_notify` DATE NOT NULL ,
   `reactions` TEXT NULL DEFAULT NULL ,
   `form` INT(3) NOT NULL DEFAULT '0' ,
   `size` FLOAT UNSIGNED NOT NULL DEFAULT '0' ,
@@ -494,7 +498,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`drug_inventory` (
   `on_hand` INT(11) NOT NULL DEFAULT '0' ,
   `warehouse_id` VARCHAR(31) NOT NULL DEFAULT '' ,
   `vendor_id` BIGINT(20) NOT NULL DEFAULT 0 ,
-  `last_notify` DATE NOT NULL DEFAULT '0000-00-00' ,
+  `last_notify` DATE NOT NULL ,
   `destroy_date` DATE NULL DEFAULT NULL ,
   `destroy_method` VARCHAR(255) NULL DEFAULT NULL ,
   `destroy_witness` VARCHAR(255) NULL DEFAULT NULL ,
@@ -624,7 +628,9 @@ AUTO_INCREMENT = 1;
 CREATE  TABLE IF NOT EXISTS `afemr`.`enc_category_map` (
   `rule_enc_id` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'encounter id from rule_enc_types list in list_options' ,
   `main_cat_id` INT(11) NOT NULL DEFAULT 0 COMMENT 'category id from event category in openemr_postcalendar_categories' ,
-  INDEX (`rule_enc_id` ASC, `main_cat_id` ASC) )
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  INDEX (`rule_enc_id` ASC, `main_cat_id` ASC) ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -676,9 +682,11 @@ AUTO_INCREMENT = 4;
 -- Table `afemr`.`fee_sheet_options`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`fee_sheet_options` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
   `fs_category` VARCHAR(63) NULL DEFAULT NULL ,
   `fs_option` VARCHAR(63) NULL DEFAULT NULL ,
-  `fs_codes` VARCHAR(255) NULL DEFAULT NULL )
+  `fs_codes` VARCHAR(255) NULL DEFAULT NULL ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -707,7 +715,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`form_encounter` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT ,
   `date` DATETIME NULL DEFAULT NULL ,
   `reason` LONGTEXT NULL DEFAULT NULL ,
-  `facility` LONGTEXT NULL DEFAULT NULL ,
+  `facility_name` LONGTEXT NULL DEFAULT NULL ,
   `facility_id` INT(11) NOT NULL DEFAULT '0' ,
   `pid` BIGINT(20) NULL DEFAULT NULL ,
   `encounter` BIGINT(20) NULL DEFAULT NULL ,
@@ -725,7 +733,13 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`form_encounter` (
   `referral_source` VARCHAR(31) NOT NULL DEFAULT '' ,
   `billing_facility` INT(11) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
-  INDEX `pid` (`pid` ASC) )
+  INDEX `pid` (`pid` ASC) ,
+  INDEX `form_encounter_FK_1` (`facility_id` ASC) ,
+  CONSTRAINT `form_encounter_FK_1`
+    FOREIGN KEY (`facility_id` )
+    REFERENCES `afemr`.`facility` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1;
 
@@ -1214,7 +1228,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`history_data` (
   `name_2` VARCHAR(255) NULL DEFAULT NULL ,
   `value_2` VARCHAR(255) NULL DEFAULT NULL ,
   `additional_history` TEXT NULL DEFAULT NULL ,
-  `exams` TEXT NOT NULL DEFAULT '' ,
+  `exams` TEXT NOT NULL ,
   `usertext11` VARCHAR(255) NOT NULL DEFAULT '' ,
   `usertext12` VARCHAR(255) NOT NULL DEFAULT '' ,
   `usertext13` VARCHAR(255) NOT NULL DEFAULT '' ,
@@ -1240,8 +1254,8 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`history_data` (
   `userdate13` DATE NULL DEFAULT NULL ,
   `userdate14` DATE NULL DEFAULT NULL ,
   `userdate15` DATE NULL DEFAULT NULL ,
-  `userarea11` TEXT NOT NULL DEFAULT '' ,
-  `userarea12` TEXT NOT NULL DEFAULT '' ,
+  `userarea11` TEXT NOT NULL ,
+  `userarea12` TEXT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `pid` (`pid` ASC) )
 ENGINE = InnoDB
@@ -1318,7 +1332,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`insurance_data` (
   `subscriber_employer_country` VARCHAR(255) NULL DEFAULT NULL ,
   `subscriber_employer_city` VARCHAR(255) NULL DEFAULT NULL ,
   `copay` VARCHAR(255) NULL DEFAULT NULL ,
-  `date` DATE NOT NULL DEFAULT '0000-00-00' ,
+  `date` DATE NOT NULL ,
   `pid` BIGINT(20) NOT NULL DEFAULT '0' ,
   `subscriber_sex` VARCHAR(25) NULL DEFAULT NULL ,
   `accept_assignment` VARCHAR(5) NOT NULL DEFAULT 'TRUE' ,
@@ -1383,7 +1397,8 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`lang_constants` (
   `cons_id` INT(11) NOT NULL AUTO_INCREMENT ,
   `constant_name` VARCHAR(255) BINARY NULL DEFAULT NULL ,
   UNIQUE INDEX `cons_id` (`cons_id` ASC) ,
-  INDEX `constant_name` (`constant_name` ASC) )
+  INDEX `constant_name` (`constant_name` ASC) ,
+  PRIMARY KEY (`cons_id`) )
 ENGINE = InnoDB;
 
 
@@ -1394,7 +1409,8 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`lang_languages` (
   `lang_id` INT(11) NOT NULL AUTO_INCREMENT ,
   `lang_code` CHAR(2) NOT NULL DEFAULT '' ,
   `lang_description` VARCHAR(100) NULL DEFAULT NULL ,
-  UNIQUE INDEX `lang_id` (`lang_id` ASC) )
+  UNIQUE INDEX `lang_id` (`lang_id` ASC) ,
+  PRIMARY KEY (`lang_id`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 2;
 
@@ -1411,6 +1427,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`lang_definitions` (
   INDEX `cons_id` (`cons_id` ASC) ,
   INDEX `language_definitions_FK_1` (`cons_id` ASC) ,
   INDEX `language_definitions_FK_2` (`lang_id` ASC) ,
+  PRIMARY KEY (`def_id`) ,
   CONSTRAINT `language_definitions_FK_1`
     FOREIGN KEY (`cons_id` )
     REFERENCES `afemr`.`lang_constants` (`cons_id` )
@@ -1428,10 +1445,12 @@ ENGINE = InnoDB;
 -- Table `afemr`.`lang_custom`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`lang_custom` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
   `lang_description` VARCHAR(100) NOT NULL DEFAULT '' ,
   `lang_code` CHAR(2) NOT NULL DEFAULT '' ,
   `constant_name` VARCHAR(255) NOT NULL DEFAULT '' ,
-  `definition` MEDIUMTEXT NOT NULL DEFAULT '' )
+  `definition` MEDIUMTEXT NOT NULL ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -1613,8 +1632,8 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`openemr_postcalendar_events` (
   `pc_counter` MEDIUMINT(8) UNSIGNED NULL DEFAULT '0' ,
   `pc_topic` INT(3) NOT NULL DEFAULT '1' ,
   `pc_informant` VARCHAR(20) NULL DEFAULT NULL ,
-  `pc_eventDate` DATE NOT NULL DEFAULT '0000-00-00' ,
-  `pc_endDate` DATE NOT NULL DEFAULT '0000-00-00' ,
+  `pc_eventDate` DATE NOT NULL ,
+  `pc_endDate` DATE NOT NULL ,
   `pc_duration` BIGINT(20) NOT NULL DEFAULT '0' ,
   `pc_recurrtype` INT(1) NOT NULL DEFAULT '0' ,
   `pc_recurrspec` TEXT NULL DEFAULT NULL ,
@@ -1801,11 +1820,12 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`patient_data` (
   UNIQUE INDEX `pid` (`pid` ASC) ,
   INDEX `id` (`id` ASC) ,
   INDEX `patient_data_FK_1` (`pharmacy_id` ASC) ,
+  PRIMARY KEY (`id`) ,
   CONSTRAINT `patient_data_FK_1`
     FOREIGN KEY (`pharmacy_id` )
     REFERENCES `afemr`.`pharmacies` (`id` )
-    ON DELETE SET NULL
-    ON UPDATE SET NULL)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1;
 
@@ -2097,12 +2117,14 @@ AUTO_INCREMENT = 16;
 -- Table `afemr`.`rule_action`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`rule_action` (
-  `id` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the id column in the clinical_rules table' ,
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(31) NOT NULL COMMENT 'Maps to the id column in the clinical_rules table' ,
   `group_id` BIGINT(20) NOT NULL DEFAULT 1 COMMENT 'Contains group id to identify collection of targets in a rule' ,
   `category` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the category item in the rule_action_item table' ,
   `item` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the item column in the rule_action_item table' ,
-  INDEX (`id` ASC) ,
+  INDEX (`name` ASC) ,
   INDEX `rule_action_FK_1` (`group_id` ASC) ,
+  PRIMARY KEY (`id`) ,
   CONSTRAINT `rule_action_FK_1`
     FOREIGN KEY (`group_id` )
     REFERENCES `afemr`.`groups` (`id` )
@@ -2118,7 +2140,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`rule_action_item` (
   `category` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to list_options list rule_action_category' ,
   `item` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to list_options list rule_action' ,
   `clin_rem_link` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Custom html link in clinical reminder widget' ,
-  `reminder_message` TEXT NOT NULL DEFAULT '' COMMENT 'Custom message in patient reminder' ,
+  `reminder_message` TEXT NOT NULL COMMENT 'Custom message in patient reminder' ,
   `custom_flag` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 indexed to rule_patient_data, 0 indexed within main schema' ,
   PRIMARY KEY (`category`, `item`) )
 ENGINE = InnoDB;
@@ -2128,13 +2150,15 @@ ENGINE = InnoDB;
 -- Table `afemr`.`rule_filter`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`rule_filter` (
-  `id` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the id column in the clinical_rules table' ,
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the id column in the clinical_rules table' ,
   `include_flag` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 is exclude and 1 is include' ,
   `required_flag` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 is required and 1 is optional' ,
   `method` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to list_options list rule_filters' ,
   `method_detail` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to list_options lists rule__intervals' ,
   `value` VARCHAR(255) NOT NULL DEFAULT '' ,
-  INDEX (`id` ASC) )
+  INDEX (`name` ASC) ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -2149,9 +2173,9 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`rule_patient_data` (
   `item` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the item column in the rule_action_item table' ,
   `complete` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to list_options list yesno' ,
   `result` VARCHAR(255) NOT NULL DEFAULT '' ,
-  PRIMARY KEY (`id`) ,
   INDEX (`pid` ASC) ,
-  INDEX (`category` ASC, `item` ASC) )
+  INDEX (`category` ASC, `item` ASC) ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1;
 
@@ -2160,11 +2184,13 @@ AUTO_INCREMENT = 1;
 -- Table `afemr`.`rule_reminder`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`rule_reminder` (
-  `id` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the id column in the clinical_rules table' ,
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the id column in the clinical_rules table' ,
   `method` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to list_options list rule_reminder_methods' ,
   `method_detail` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to list_options list rule_reminder_intervals' ,
   `value` VARCHAR(255) NOT NULL DEFAULT '' ,
-  INDEX (`id` ASC) )
+  INDEX (`name` ASC) ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -2172,15 +2198,17 @@ ENGINE = InnoDB;
 -- Table `afemr`.`rule_target`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`rule_target` (
-  `id` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the id column in the clinical_rules table' ,
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to the id column in the clinical_rules table' ,
   `group_id` BIGINT(20) NOT NULL DEFAULT 1 COMMENT 'Contains group id to identify collection of targets in a rule' ,
   `include_flag` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 is exclude and 1 is include' ,
   `required_flag` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0 is required and 1 is optional' ,
   `method` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'Maps to list_options list rule_targets' ,
   `value` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Data is dependent on the method' ,
   `interval` BIGINT(20) NOT NULL DEFAULT 0 COMMENT 'Only used in interval entries' ,
-  INDEX (`id` ASC) ,
+  INDEX (`name` ASC) ,
   INDEX `rule_target_FK_1` (`group_id` ASC) ,
+  PRIMARY KEY (`id`) ,
   CONSTRAINT `rule_target_FK_1`
     FOREIGN KEY (`group_id` )
     REFERENCES `afemr`.`groups` (`id` )
@@ -2193,7 +2221,8 @@ ENGINE = InnoDB;
 -- Table `afemr`.`sequences`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`sequences` (
-  `id` INT(11) UNSIGNED NOT NULL DEFAULT '0' )
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -2204,12 +2233,12 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`transactions` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT ,
   `date` DATETIME NULL DEFAULT NULL ,
   `title` VARCHAR(255) NOT NULL DEFAULT '' ,
-  `body` LONGTEXT NOT NULL DEFAULT '' ,
+  `body` LONGTEXT NOT NULL ,
   `pid` BIGINT(20) NULL DEFAULT NULL ,
   `user` VARCHAR(255) NOT NULL DEFAULT '' ,
   `groupname` VARCHAR(255) NOT NULL DEFAULT '' ,
   `authorized` TINYINT(4) NULL DEFAULT NULL ,
-  `refer_date` DATE NULL DEFAULT NULL ,
+  `refer_date` DATE NULL ,
   `refer_from` INT(11) NOT NULL DEFAULT 0 ,
   `refer_to` INT(11) NOT NULL DEFAULT 0 ,
   `refer_diag` VARCHAR(255) NOT NULL DEFAULT '' ,
@@ -2217,16 +2246,16 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`transactions` (
   `refer_vitals` TINYINT(1) NOT NULL DEFAULT 0 ,
   `refer_external` TINYINT(1) NOT NULL DEFAULT 0 ,
   `refer_related_code` VARCHAR(255) NOT NULL DEFAULT '' ,
-  `refer_reply_date` DATE NULL DEFAULT NULL ,
-  `reply_date` DATE NULL DEFAULT NULL ,
+  `refer_reply_date` DATE NULL ,
+  `reply_date` DATE NULL ,
   `reply_from` VARCHAR(255) NOT NULL DEFAULT '' ,
   `reply_init_diag` VARCHAR(255) NOT NULL DEFAULT '' ,
   `reply_final_diag` VARCHAR(255) NOT NULL DEFAULT '' ,
   `reply_documents` VARCHAR(255) NOT NULL DEFAULT '' ,
-  `reply_findings` TEXT NOT NULL DEFAULT '' ,
-  `reply_services` TEXT NOT NULL DEFAULT '' ,
-  `reply_recommend` TEXT NOT NULL DEFAULT '' ,
-  `reply_rx_refer` TEXT NOT NULL DEFAULT '' ,
+  `reply_findings` TEXT NOT NULL ,
+  `reply_services` TEXT NOT NULL ,
+  `reply_recommend` TEXT NOT NULL ,
+  `reply_rx_refer` TEXT NOT NULL ,
   `reply_related_code` VARCHAR(255) NOT NULL DEFAULT '' ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
@@ -2302,13 +2331,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`user_settings` (
   `setting_user` BIGINT(20) NOT NULL DEFAULT 0 ,
   `setting_label` VARCHAR(63) NOT NULL ,
   `setting_value` VARCHAR(255) NOT NULL DEFAULT '' ,
-  PRIMARY KEY (`setting_user`, `setting_label`) ,
-  INDEX `user_settings_FK_1` (`setting_user` ASC) ,
-  CONSTRAINT `user_settings_FK_1`
-    FOREIGN KEY (`setting_user` )
-    REFERENCES `afemr`.`users` (`id` )
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+  PRIMARY KEY (`setting_user`, `setting_label`) )
 ENGINE = InnoDB;
 
 
@@ -2345,7 +2368,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`automatic_notification` (
   `message` TEXT NOT NULL ,
   `email_sender` VARCHAR(100) NOT NULL ,
   `email_subject` VARCHAR(100) NOT NULL ,
-  `type` ENUM('SMS','Email') NOT NULL DEFAULT 'SMS' ,
+  `type` VARCHAR(64) NOT NULL DEFAULT 'SMS' ,
   `notification_sent_date` DATETIME NOT NULL ,
   PRIMARY KEY (`notification_id`) )
 ENGINE = InnoDB
@@ -2443,7 +2466,7 @@ ENGINE = InnoDB;
 CREATE  TABLE IF NOT EXISTS `afemr`.`ar_activity` (
   `pid` INT(11) NOT NULL ,
   `encounter` INT(11) NOT NULL ,
-  `sequence_no` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `sequence_no` INT UNSIGNED NOT NULL ,
   `code` VARCHAR(9) NOT NULL COMMENT 'empty means claim level' ,
   `modifier` VARCHAR(5) NOT NULL DEFAULT '' ,
   `payer_type` INT NOT NULL COMMENT '0=pt, 1=ins1, 2=ins2, etc' ,
@@ -2545,7 +2568,7 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`procedure_order` (
   `date_ordered` DATE NULL DEFAULT NULL ,
   `order_priority` VARCHAR(31) NOT NULL DEFAULT '' ,
   `order_status` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'pending,routed,complete,canceled' ,
-  `patient_instructions` TEXT NOT NULL DEFAULT '' ,
+  `patient_instructions` TEXT NOT NULL ,
   `activity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '0 if deleted' ,
   `control_id` BIGINT(20) NOT NULL COMMENT 'This is the CONTROL ID that is sent back from lab' ,
   PRIMARY KEY (`procedure_order_id`) ,
@@ -2589,13 +2612,13 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`procedure_result` (
   `procedure_result_id` BIGINT(20) NOT NULL AUTO_INCREMENT ,
   `procedure_report_id` BIGINT(20) NOT NULL COMMENT 'references procedure_report.procedure_report_id' ,
   `procedure_type_id` BIGINT(20) NOT NULL COMMENT 'references procedure_type.procedure_type_id' ,
-  `date` DATETIME NULL DEFAULT NULL COMMENT 'lab-provided date specific to this result' ,
+  `date` DATETIME NULL COMMENT 'lab-provided date specific to this result' ,
   `facility` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'lab-provided testing facility ID' ,
   `units` VARCHAR(31) NOT NULL DEFAULT '' ,
   `result` VARCHAR(255) NOT NULL DEFAULT '' ,
   `range` VARCHAR(255) NOT NULL DEFAULT '' ,
   `abnormal` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'no,yes,high,low' ,
-  `comments` TEXT NOT NULL DEFAULT '' COMMENT 'comments from the lab' ,
+  `comments` TEXT NOT NULL COMMENT 'comments from the lab' ,
   `document_id` BIGINT(20) NOT NULL DEFAULT 0 COMMENT 'references documents.id if this result is a document' ,
   `result_status` VARCHAR(31) NOT NULL DEFAULT '' COMMENT 'preliminary, cannot be done, final, corrected, incompete...etc.' ,
   PRIMARY KEY (`procedure_result_id`) ,
@@ -2665,11 +2688,13 @@ AUTO_INCREMENT = 1;
 -- Table `afemr`.`version`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`version` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
   `v_major` INT(11) NOT NULL DEFAULT 0 ,
   `v_minor` INT(11) NOT NULL DEFAULT 0 ,
   `v_patch` INT(11) NOT NULL DEFAULT 0 ,
   `v_tag` VARCHAR(31) NOT NULL DEFAULT '' ,
-  `v_database` INT(11) NOT NULL DEFAULT 0 )
+  `v_database` INT(11) NOT NULL DEFAULT 0 ,
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 

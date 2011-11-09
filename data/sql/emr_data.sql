@@ -2637,6 +2637,8 @@ INSERT INTO `sequences` (`id`) VALUES
 -- Dumping data for table `users`
 --
 
+INSERT INTO `users` (`username`, `info`) VALUES
+('admin', 'Administrator');
 
 --
 -- Dumping data for table `users_facility`

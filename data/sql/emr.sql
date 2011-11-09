@@ -51,6 +51,68 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `afemr`.`users`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `afemr`.`users` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT ,
+  `username` VARCHAR(255) NULL DEFAULT NULL ,
+  `password` LONGTEXT NULL DEFAULT NULL ,
+  `authorized` TINYINT(4) NULL DEFAULT NULL ,
+  `info` LONGTEXT NULL DEFAULT NULL ,
+  `source` TINYINT(4) NULL DEFAULT NULL ,
+  `fname` VARCHAR(255) NULL DEFAULT NULL ,
+  `mname` VARCHAR(255) NULL DEFAULT NULL ,
+  `lname` VARCHAR(255) NULL DEFAULT NULL ,
+  `federaltaxid` VARCHAR(255) NULL DEFAULT NULL ,
+  `federaldrugid` VARCHAR(255) NULL DEFAULT NULL ,
+  `upin` VARCHAR(255) NULL DEFAULT NULL ,
+  `facility` VARCHAR(255) NULL DEFAULT NULL ,
+  `facility_id` INT(11) NOT NULL DEFAULT '0' ,
+  `see_auth` INT(11) NOT NULL DEFAULT '1' ,
+  `active` TINYINT(1) NOT NULL DEFAULT '1' ,
+  `npi` VARCHAR(15) NULL DEFAULT NULL ,
+  `title` VARCHAR(30) NULL DEFAULT NULL ,
+  `specialty` VARCHAR(255) NULL DEFAULT NULL ,
+  `billname` VARCHAR(255) NULL DEFAULT NULL ,
+  `email` VARCHAR(255) NULL DEFAULT NULL ,
+  `url` VARCHAR(255) NULL DEFAULT NULL ,
+  `assistant` VARCHAR(255) NULL DEFAULT NULL ,
+  `organization` VARCHAR(255) NULL DEFAULT NULL ,
+  `valedictory` VARCHAR(255) NULL DEFAULT NULL ,
+  `street` VARCHAR(60) NULL DEFAULT NULL ,
+  `streetb` VARCHAR(60) NULL DEFAULT NULL ,
+  `city` VARCHAR(30) NULL DEFAULT NULL ,
+  `state` VARCHAR(30) NULL DEFAULT NULL ,
+  `zip` VARCHAR(20) NULL DEFAULT NULL ,
+  `street2` VARCHAR(60) NULL DEFAULT NULL ,
+  `streetb2` VARCHAR(60) NULL DEFAULT NULL ,
+  `city2` VARCHAR(30) NULL DEFAULT NULL ,
+  `state2` VARCHAR(30) NULL DEFAULT NULL ,
+  `zip2` VARCHAR(20) NULL DEFAULT NULL ,
+  `phone` VARCHAR(30) NULL DEFAULT NULL ,
+  `fax` VARCHAR(30) NULL DEFAULT NULL ,
+  `phonew1` VARCHAR(30) NULL DEFAULT NULL ,
+  `phonew2` VARCHAR(30) NULL DEFAULT NULL ,
+  `phonecell` VARCHAR(30) NULL DEFAULT NULL ,
+  `notes` TEXT NULL DEFAULT NULL ,
+  `cal_ui` TINYINT(4) NOT NULL DEFAULT '1' ,
+  `taxonomy` VARCHAR(30) NOT NULL DEFAULT '207Q00000X' ,
+  `ssi_relayhealth` VARCHAR(64) NULL DEFAULT NULL ,
+  `calendar` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 = appears in calendar' ,
+  `abook_type` VARCHAR(31) NOT NULL DEFAULT '' ,
+  `pwd_expiration_date` DATE NULL DEFAULT NULL ,
+  `pwd_history1` LONGTEXT NULL DEFAULT NULL ,
+  `pwd_history2` LONGTEXT NULL DEFAULT NULL ,
+  `default_warehouse` VARCHAR(31) NOT NULL DEFAULT '' ,
+  `irnpool` VARCHAR(31) NOT NULL DEFAULT '' ,
+  `state_license_number` VARCHAR(25) NULL DEFAULT NULL ,
+  `newcrop_user_role` VARCHAR(30) NULL DEFAULT NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+AUTO_INCREMENT = 1;
+
+
+-- -----------------------------------------------------
 -- Table `afemr`.`audit_master`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `afemr`.`audit_master` (
@@ -63,7 +125,13 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`audit_master` (
   `modified_time` DATETIME NOT NULL ,
   `ip_address` VARCHAR(100) NOT NULL ,
   `type` TINYINT(4) NOT NULL COMMENT '1-new patient,2-existing patient,3-change is only in the document,5-random key,10-Appointment' ,
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+  INDEX `audit_master_FK_1` (`user_id` ASC) ,
+  CONSTRAINT `audit_master_FK_1`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `afemr`.`users` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1;
 
@@ -79,9 +147,9 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`audit_details` (
   `audit_master_id` BIGINT(20) NOT NULL COMMENT 'Id of the audit_master table' ,
   `entry_identification` VARCHAR(255) NOT NULL DEFAULT '1' COMMENT 'Used when multiple entry occurs from the same table.1 means no multiple entry' ,
   PRIMARY KEY (`id`) ,
-  INDEX `audit_details_FK_1` (`id` ASC) ,
+  INDEX `audit_details_FK_1` (`audit_master_id` ASC) ,
   CONSTRAINT `audit_details_FK_1`
-    FOREIGN KEY (`id` )
+    FOREIGN KEY (`audit_master_id` )
     REFERENCES `afemr`.`audit_master` (`id` )
     ON DELETE CASCADE
     ON UPDATE CASCADE)
@@ -2257,68 +2325,6 @@ CREATE  TABLE IF NOT EXISTS `afemr`.`transactions` (
   `reply_recommend` TEXT NOT NULL ,
   `reply_rx_refer` TEXT NOT NULL ,
   `reply_related_code` VARCHAR(255) NOT NULL DEFAULT '' ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-AUTO_INCREMENT = 1;
-
-
--- -----------------------------------------------------
--- Table `afemr`.`users`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `afemr`.`users` (
-  `id` BIGINT(20) NOT NULL AUTO_INCREMENT ,
-  `username` VARCHAR(255) NULL DEFAULT NULL ,
-  `password` LONGTEXT NULL DEFAULT NULL ,
-  `authorized` TINYINT(4) NULL DEFAULT NULL ,
-  `info` LONGTEXT NULL DEFAULT NULL ,
-  `source` TINYINT(4) NULL DEFAULT NULL ,
-  `fname` VARCHAR(255) NULL DEFAULT NULL ,
-  `mname` VARCHAR(255) NULL DEFAULT NULL ,
-  `lname` VARCHAR(255) NULL DEFAULT NULL ,
-  `federaltaxid` VARCHAR(255) NULL DEFAULT NULL ,
-  `federaldrugid` VARCHAR(255) NULL DEFAULT NULL ,
-  `upin` VARCHAR(255) NULL DEFAULT NULL ,
-  `facility` VARCHAR(255) NULL DEFAULT NULL ,
-  `facility_id` INT(11) NOT NULL DEFAULT '0' ,
-  `see_auth` INT(11) NOT NULL DEFAULT '1' ,
-  `active` TINYINT(1) NOT NULL DEFAULT '1' ,
-  `npi` VARCHAR(15) NULL DEFAULT NULL ,
-  `title` VARCHAR(30) NULL DEFAULT NULL ,
-  `specialty` VARCHAR(255) NULL DEFAULT NULL ,
-  `billname` VARCHAR(255) NULL DEFAULT NULL ,
-  `email` VARCHAR(255) NULL DEFAULT NULL ,
-  `url` VARCHAR(255) NULL DEFAULT NULL ,
-  `assistant` VARCHAR(255) NULL DEFAULT NULL ,
-  `organization` VARCHAR(255) NULL DEFAULT NULL ,
-  `valedictory` VARCHAR(255) NULL DEFAULT NULL ,
-  `street` VARCHAR(60) NULL DEFAULT NULL ,
-  `streetb` VARCHAR(60) NULL DEFAULT NULL ,
-  `city` VARCHAR(30) NULL DEFAULT NULL ,
-  `state` VARCHAR(30) NULL DEFAULT NULL ,
-  `zip` VARCHAR(20) NULL DEFAULT NULL ,
-  `street2` VARCHAR(60) NULL DEFAULT NULL ,
-  `streetb2` VARCHAR(60) NULL DEFAULT NULL ,
-  `city2` VARCHAR(30) NULL DEFAULT NULL ,
-  `state2` VARCHAR(30) NULL DEFAULT NULL ,
-  `zip2` VARCHAR(20) NULL DEFAULT NULL ,
-  `phone` VARCHAR(30) NULL DEFAULT NULL ,
-  `fax` VARCHAR(30) NULL DEFAULT NULL ,
-  `phonew1` VARCHAR(30) NULL DEFAULT NULL ,
-  `phonew2` VARCHAR(30) NULL DEFAULT NULL ,
-  `phonecell` VARCHAR(30) NULL DEFAULT NULL ,
-  `notes` TEXT NULL DEFAULT NULL ,
-  `cal_ui` TINYINT(4) NOT NULL DEFAULT '1' ,
-  `taxonomy` VARCHAR(30) NOT NULL DEFAULT '207Q00000X' ,
-  `ssi_relayhealth` VARCHAR(64) NULL DEFAULT NULL ,
-  `calendar` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 = appears in calendar' ,
-  `abook_type` VARCHAR(31) NOT NULL DEFAULT '' ,
-  `pwd_expiration_date` DATE NULL DEFAULT NULL ,
-  `pwd_history1` LONGTEXT NULL DEFAULT NULL ,
-  `pwd_history2` LONGTEXT NULL DEFAULT NULL ,
-  `default_warehouse` VARCHAR(31) NOT NULL DEFAULT '' ,
-  `irnpool` VARCHAR(31) NOT NULL DEFAULT '' ,
-  `state_license_number` VARCHAR(25) NULL DEFAULT NULL ,
-  `newcrop_user_role` VARCHAR(30) NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1;

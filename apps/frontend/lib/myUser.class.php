@@ -1,6 +1,6 @@
 <?php
 
-class myUser extends sfBasicSecurityUser
+class myUser extends sfBasicSecurityUser implements AppFlowerSecurityUser
 {
     public function initialize(sfEventDispatcher $dispatcher, sfStorage $storage, $options = array())
     {
@@ -9,12 +9,15 @@ class myUser extends sfBasicSecurityUser
         parent::initialize($dispatcher, $storage, $options);
     }
     
-    
-    /*
-        TODO remove dependency from engine this methods
-    */
-    public function getAppFlowerUser() { return $this; }
-    public function isAnonymous() { return true; }
-    public function getId() {}
+    /**
+     * Getting AppFlower User
+     *
+     * @return object
+     * @author Łukasz Wojciechowski <luwo@appflower.com>
+     */
+    public function getAppFlowerUser()
+    {
+        return new AppFlowerAnonymousUser;
+    }
     
 }

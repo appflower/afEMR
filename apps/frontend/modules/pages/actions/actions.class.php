@@ -55,14 +55,5 @@ class pagesActions extends CustomActions
     $this->setTemplate("ext");
     return sfView::SUCCESS;
   }		
-
-  public function executeTabs()
-  {  	
-    return XmlParser::layoutExt($this, XmlParser::PAGE);
-  }
-
-  public function executeDashboard()
-  {  	 	
-    return XmlParser::layoutExt($this, XmlParser::PAGE);
-  }
+  
 }

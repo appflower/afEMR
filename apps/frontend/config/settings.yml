@@ -37,8 +37,8 @@ test:
 
 all:
   .actions:
-    login_module:           afGuardAuth   # To be called when a non-authenticated user
-    login_action:           signin        # Tries to access a secure page
+    login_module:           default   # To be called when a non-authenticated user
+    login_action:           welcome        # Tries to access a secure page
 
     secure_module:          pages   # To be called when a user doesn't have
     secure_action:          insufficientCredentials        # The credentials required for an action
